@@ -1,4 +1,5 @@
 import Fastify, { FastifyReply, FastifyRequest } from 'fastify'
+import cors from '@fastify/cors'
 
 import { PrismaClient } from '@prisma/client'
 
@@ -9,6 +10,8 @@ const prisma = new PrismaClient({
 const app = Fastify({
   logger: false,
 })
+
+app.register(cors, {})
 
 interface IUserBody {
   name: string
