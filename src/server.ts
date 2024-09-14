@@ -6,14 +6,15 @@ const prisma = new PrismaClient({
 
 console.log("Server aula prisma 01")
 
+
 prisma.user.create({
-    data: {
+      data: {
         name: 'Gerson2',
         email: 'gerson4@gmail.com'
     }
-}).then((result) => {
-  console.log(result)}).catch((error) => {
-    console.log("DEU ERROR")
+  }).then((result) => {
+  console.log(result)}).catch(() => {
+    console.log("DEU ERROR no create")
   })
 
   /**
@@ -28,8 +29,8 @@ prisma.user.delete({
   where: {
     email: 'gerson2@gmail.com'}
 }).then(() => {}).catch((error) => {
-console.log(error)
-console.log("DEU ERROR no DELETE 2")
+   console.log(error)
+  console.log("DEU ERROR no DELETE 2")
 })
 
 prisma.user.update({
@@ -38,7 +39,7 @@ prisma.user.update({
     },
     data: {
         name: 'Gerson Atualizado'
-    }}).then((result) => {
+    }}).then(() => {
       console.log("DEU CERTO O UPDATE")
     })
 
@@ -46,7 +47,7 @@ prisma.user.update({
 prisma:query UPDATE `main`.`User` SET `name` = ? WHERE (`main`.`User`.`email` = ? AND 1=1) RETURNING `id` AS `id`, `email` AS `email`, `name` AS `name`
 */
 
-prisma.user.findMany().then((result) => {
+ prisma.user.findMany().then((result) => {
     result.forEach((user) => {
       if(user.email === 'gerson3@gmail.com'){
         console.log(user)
@@ -60,6 +61,6 @@ prisma:query SELECT `main`.`User`.`id`,
   FROM `main`.`User` WHERE 1=1 LIMIT ? OFFSET ?
 */
 
-  prisma.user.findFirst().then((result) => {
+   prisma.user.findFirst().then((result) => {
     console.log(result)
   })
