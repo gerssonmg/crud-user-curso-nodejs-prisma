@@ -1,17 +1,13 @@
 import Fastify, { FastifyReply, FastifyRequest } from 'fastify'
 
-const app = Fastify({
-  logger: false,
+import { PrismaClient } from '@prisma/client'
+
+const prisma = new PrismaClient({
+  log: ['query'],
 })
 
-const users = [
-  { id: 1, name: 'Gerson', email: 'gerson@gmail.com' },
-  { id: 2, name: 'Ana', email: 'ana@gmail.com' },
-]
-
-// Rota GET
-app.get('/list-users', function (request, reply) {
-  reply.send(users)
+const app = Fastify({
+  logger: false,
 })
 
 interface IUserBody {
@@ -23,8 +19,15 @@ interface IUserParams {
   id: number
 }
 
+// Rota GET
+app.get('/list-users', function (request, reply) {
+  prisma.user.findMany().then((result) => {
+    reply.send(result)
+  })
+})
+
 app.post(
-  '/create-user2',
+  '/create-user',
   function (
     request: FastifyRequest<{
       Body: IUserBody
@@ -34,12 +37,20 @@ app.post(
     console.log(request.body)
     const { name, email } = request.body
 
-    users.push({
-      id: users.length + 1,
-      name,
-      email,
-    })
-    reply.send('usuario criado com sucesso')
+    prisma.user
+      .create({
+        data: {
+          name: name,
+          email: email,
+        },
+      })
+      .then((result) => {
+        reply.send(result)
+      })
+      .catch((error) => {
+        reply.send(error)
+        console.log('DEU ERROR no create')
+      })
   },
 )
 
@@ -50,26 +61,43 @@ app.put(
     reply,
   ) {
     const { id } = request.params
-    console.log(request.params)
 
     const { name, email } = request.body
 
-    users[id - 1] = {
-      id: id,
-      name: name,
-      email: email,
-    }
-
-    reply.send('usuario atualizado com sucesso')
+    prisma.user
+      .update({
+        where: {
+          id: Number(id),
+        },
+        data: {
+          name: name,
+          email: email,
+        },
+      })
+      .then((result) => {
+        reply.send(result)
+      })
+      .catch((error) => {
+        reply.send(error)
+      })
   },
 )
 
 app.delete(
   '/delete-user/:id',
   function (request: FastifyRequest<{ Params: IUserParams }>, reply) {
-    users.splice(request.params.id - 1, 1)
-
-    reply.send()
+    prisma.user
+      .delete({
+        where: {
+          id: Number(request.params.id),
+        },
+      })
+      .then((result) => {
+        reply.send(result)
+      })
+      .catch((error) => {
+        reply.send(error)
+      })
   },
 )
 
