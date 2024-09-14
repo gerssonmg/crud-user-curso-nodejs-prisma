@@ -13,4 +13,5 @@ npx eslint --init
 
 npm install --save-dev prettier eslint-config-prettier eslint-plugin-prettier
 
+pnpm i fastify
 -->
