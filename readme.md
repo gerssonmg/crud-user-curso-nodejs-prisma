@@ -10,4 +10,7 @@ pnpm i dotenv
 pnpm i eslint
 
 npx eslint --init
+
+npm install --save-dev prettier eslint-config-prettier eslint-plugin-prettier
+
 -->
